@@ -80,6 +80,32 @@ class LearningModel(object):
         else:
             return self.vector_in
 
+    @staticmethod
+    def nalu(input_layer, num_outputs):
+        """ Neural Arithmetic Logic Unit tesnorflow layer
+        Arguments:
+        input_layer - A Tensor representing previous layer
+        num_outputs - number of ouput units
+        Returns:
+        A tensor representing the output of NALU
+        """
+
+        shape = (int(input_layer.shape[-1]), num_outputs)
+
+        # define variables
+        W_hat = tf.Variable(tf.truncated_normal(shape, stddev=0.02))
+        M_hat = tf.Variable(tf.truncated_normal(shape, stddev=0.02))
+        G = tf.Variable(tf.truncated_normal(shape, stddev=0.02))
+
+        # operations according to paper
+        W = tf.tanh(W_hat) * tf.sigmoid(M_hat)
+        m = tf.exp(tf.matmul(tf.log(tf.abs(input_layer) + 1e-7), W))
+        g = tf.sigmoid(tf.matmul(input_layer, G))
+        a = tf.matmul(input_layer, W)
+        out = g * a + (1 - g) * m
+
+        return out
+
     def create_normalizer_update(self, vector_input):
         mean_current_observation = tf.reduce_mean(vector_input, axis=0)
         new_mean = self.running_mean + (mean_current_observation - self.running_mean) / \
@@ -260,8 +286,9 @@ class LearningModel(object):
             hidden_policy = hidden_streams[0]
             hidden_value = hidden_streams[1]
 
-        mu = tf.layers.dense(hidden_policy, self.a_size, activation=None,
-                             kernel_initializer=c_layers.variance_scaling_initializer(factor=0.01))
+        mu = self.nalu(hidden_policy, self.a_size)
+        #mu = tf.layers.dense(hidden_policy, self.a_size, activation=None,
+        #                     kernel_initializer=c_layers.variance_scaling_initializer(factor=0.01))
 
         log_sigma_sq = tf.get_variable("log_sigma_squared", [self.a_size], dtype=tf.float32,
                                        initializer=tf.zeros_initializer())
@@ -284,7 +311,8 @@ class LearningModel(object):
 
         self.entropy = tf.reduce_mean(0.5 * tf.log(2 * np.pi * np.e * sigma_sq))
 
-        value = tf.layers.dense(hidden_value, 1, activation=None)
+        value = self.nalu(hidden_value, 1)
+        #value = tf.layers.dense(hidden_value, 1, activation=None)
         self.value = tf.identity(value, name="value_estimate")
 
         self.all_old_probs = tf.placeholder(shape=[None, self.a_size], dtype=tf.float32,
