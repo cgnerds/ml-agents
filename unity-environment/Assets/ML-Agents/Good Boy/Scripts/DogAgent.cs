@@ -271,6 +271,7 @@ public class DogAgent : Agent {
             RotateBody(vectorAction[++i]); 
         }
 
+        //Energy Conservation
         var bodyRotationPenalty = -.001f * vectorAction[20]; //rotation strength.
         AddReward(bodyRotationPenalty);
 
