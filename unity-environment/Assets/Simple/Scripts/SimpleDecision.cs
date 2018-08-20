@@ -4,6 +4,10 @@ using MLAgents;
 
 public class SimpleDecision : MonoBehaviour, Decision
 {
+    private int action;
+    private int lastAction;
+    public float learningRate;
+    public float[] values = new float[4];
 
     public float[] Decide(
         List<float> vectorObs,
@@ -12,7 +16,13 @@ public class SimpleDecision : MonoBehaviour, Decision
         bool done,
         List<float> memory)
     {
-        return new float[0];
+        lastAction = action - 1;
+        if(++action > 4) action = 1;
+        if(lastAction > -1)
+        {
+            values[lastAction] = values[lastAction] + learningRate * (reward - values[lastAction]);
+        }
+        return new float[] { action };
     }
 
     public List<float> MakeMemory(

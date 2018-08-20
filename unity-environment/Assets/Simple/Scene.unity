@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: (Clone)
   m_EditorClassIdentifier: 
   broadcast: 1
-  brain: {fileID: 0}
+  brain: {fileID: 846768605}
 --- !u!1 &762086410
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,6 +238,7 @@ GameObject:
   m_Component:
   - component: {fileID: 846768604}
   - component: {fileID: 846768605}
+  - component: {fileID: 846768606}
   m_Layer: 0
   m_Name: Brain
   m_TagString: Untagged
@@ -281,13 +282,30 @@ MonoBehaviour:
     - 4
     vectorActionSpaceType: 0
     vectorObservationSpaceType: 0
-  brainType: 0
+  brainType: 1
   CoreBrains:
   - {fileID: 456519877}
   - {fileID: 467090830}
   - {fileID: 766813055}
   - {fileID: 1801811957}
   instanceID: 22712
+--- !u!114 &846768606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 846768603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e4ac400e64c4c248b9becfd4d940ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  learningRate: 0.9
+  values:
+  - 0
+  - 0
+  - 0
+  - 0
 --- !u!1 &919000205
 GameObject:
   m_ObjectHideFlags: 0
